@@ -69,7 +69,16 @@ int main(){
 }
 
 void addMovies(){
-    int movies;
+    int movies, recordCount = 0;
+    original = fopen(filename, "rb");
+    while(fread(&movie, sizeof(struct list), 1, original)!= (int)NULL) recordCount++;    
+    system("cls");
+    if(recordCount > 25){
+        printf("Records Exceeded. Delete some Files First!\n\n"); getch();
+        return;
+    } 
+    fclose(original);
+
     while(1){
         printf("Add Movies:\nA. Add a Movie\nB. Add Multiple Movies\nSelect process: ");
         scanf(" %c", &select);
@@ -88,7 +97,7 @@ void addMovies(){
         while(1){
             printf("How Many Movies: ");
             scanf("%d", &movies);
-            if(movies > 0 && movies < 100) break;
+            if(movies > 0 && movies < (25-recordCount)) break;
             system("cls");
             printf("Either it's too much or too less\n\n");
         }
