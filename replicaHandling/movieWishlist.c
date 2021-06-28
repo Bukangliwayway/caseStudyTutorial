@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #define replicaname "replica.dat"
-#define filename "movieList.dat"
+#define filename "movieWishlist.dat"
 
 // Max of 25 Records only since I use the alphabets here. (including the Exit Choice)
 // Also 25 movies in a list is damn too much already okay?? Just delete some instead.
@@ -70,7 +70,6 @@ int main(){
 
 void addMovies(){
     int movies;
-    original = fopen(filename, "ab");
     while(1){
         printf("Add Movies:\nA. Add a Movie\nB. Add Multiple Movies\nSelect process: ");
         scanf(" %c", &select);
@@ -82,7 +81,9 @@ void addMovies(){
     if(select=='A'){
         printf("Add Movie\n\n");
         addProcess();
+        original = fopen(filename, "ab");
         fwrite(&movie, sizeof(struct list), 1, original);
+        fclose(original);
     }else{
         while(1){
             printf("How Many Movies: ");
@@ -91,14 +92,15 @@ void addMovies(){
             system("cls");
             printf("Either it's too much or too less\n\n");
         }
+        original = fopen(filename, "ab");
         for(int i = 0; i < movies; i++){
             system("cls"); 
             printf("Movie#%d\n\n", i+1);
             addProcess();
             fwrite(&movie, sizeof(struct list), 1, original);
         }
+        fclose(original);
     }
-    fclose(original);
 }
 
 void addProcess(){
@@ -144,22 +146,21 @@ void viewMovies(){
 }
 
 void editMovie(){
-    original = fopen(filename, "rb");
     while(1){
+        original = fopen(filename, "rb");
         movieCount = 0;
         for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
             printf(" %c. %s\n",'A'+i, movie.movieName);
             movieCount++;
         }
         printf(" %c. Exit Process\n\n", 'A'+movieCount);
-        fseek(original, 0, SEEK_SET);
+        fclose(original);
         printf("Select Movies: ");
         scanf(" %c", &select);
         if(select >= 'A' && select <= 'A'+ movieCount) break;
         system("cls");
         printf("Invalid Choice!\n\n");
     }
-    fclose(original);
     if(select == 'A'+ movieCount) return;
     movieCount = (int)select; // aaaaaaaa I don't wanna use and waste another variable just to save this line okay?!
     system("cls");
@@ -170,10 +171,10 @@ void editMovie(){
             printf("A. Movie Name: %s\nB. Movie Director: %s\nC. Date Release: %d\nD. Ratings: %0.1f\nE. Exit Process\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
             break;
         }
+        fclose(original);
         printf("\nChoose Data to Edit: ");
         scanf(" %c", &select);
         if(select >= 'A' && select <= 'E') break;
-        fclose(original);
         system("cls");
         printf("Invalid Choice!\n\n");
     }
@@ -223,10 +224,17 @@ void editMovie(){
         perror("File Deletion Failed!\nSuggestion: Open the Editor in Admin\n");
         getch();
     } 
-    //Deletes the existing outdated file.dat
+    //Rename the Replica to Original
     if(rename(replicaname, filename)){
-        perror("\nFile Rename Failed!\n");
+        system("cls");
+        perror("File Rename Failed!\nCopying the content of Replica to the Original Instead...\n");
         getch();
+        original = fopen(filename, "wb");
+        replica = fopen(replicaname, "rb");
+        for(int i = 0; fread(&movie, sizeof(struct list), 1, replica) != (int)NULL; i++)
+            fwrite(&movie, sizeof(struct list), 1, original);
+        fclose(replica);
+        fclose(original);
     } 
     system("cls");
     original = fopen(filename, "rb");
@@ -242,46 +250,52 @@ void editMovie(){
 }
 
 void removeMovie(){
-    original = fopen(filename, "rb");
     while(1){
+        original = fopen(filename, "rb");
         movieCount = 0;
         for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
             printf(" %c. %s\n",'A'+i, movie.movieName);
             movieCount++;
         }
         printf(" %c. Exit Process\n\n", 'A'+movieCount);
-        fseek(original, 0, SEEK_SET);
+        fclose(original);
         printf("Select Movies to Remove: ");
         scanf(" %c", &select);
         if(select >= 'A' && select <= 'A'+ movieCount) break;
         system("cls");
         printf("Invalid Choice!\n\n");
     }
-    fclose(original);
     if(select == 'A'+ movieCount) return;
     system("cls");
-    original = fopen(filename, "rb");
     replica = fopen(replicaname, "wb");
+    original = fopen(filename, "rb");
     for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
         if(i == select-'A') continue;
-        fwrite(&movie, sizeof(struct list),1,replica);
+        fwrite(&movie, sizeof(struct list), 1, replica);
     }
-    fclose(replica);
     fclose(original);
+    fclose(replica);
     //Deletes the existing outdated file.dat
-    system("cls");
     if(remove(filename)){
+        system("cls");
         perror("File Deletion Failed!\nSuggestion: Open the Editor in Admin\n");
         getch();
     } 
-    //Deletes the existing outdated file.dat
+    //Rename the Replica to Original
     if(rename(replicaname, filename)){
-        perror("\nFile Rename Failed!\n");
+        system("cls");
+        perror("File Rename Failed!\nCopying the content of Replica to the Original Instead...\n");
         getch();
-    } 
+        original = fopen(filename, "wb");
+        replica = fopen(replicaname, "rb");
+        for(int i = 0; fread(&movie, sizeof(struct list), 1, replica) != (int)NULL; i++)
+            fwrite(&movie, sizeof(struct list), 1, original);
+        fclose(replica);
+        fclose(original);
+    }
     system("cls");
     original = fopen(filename, "rb");
-    printf("Here is the updated record: \n\n");
+    printf("Here's the updated record: \n");
     for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++)
         printf(" %c. %s\t%d\n", 'A'+i, movie.movieName, movie.releaseDate);
     printf("Press any key to quit...");

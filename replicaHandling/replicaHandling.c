@@ -36,7 +36,7 @@ int main(){
     scanf("%d", &delete);
 
     replica = fopen(replicaname, "wb");
-    original = fopen(filename, "r");
+    original = fopen(filename, "rb");
     // This copy the content from original.dat to replica.dat except the chosen line to delete
     for(int i = 0; fread(&members, sizeof(struct team), 1, original) != (int)NULL; i++){
         if(i==delete-1) continue;
