@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#define filename "file.dat"
+#define filename "lesson3.dat"
 struct team{
     char name[30];
     char role[30];

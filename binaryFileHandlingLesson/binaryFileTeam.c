@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#define filename "file.dat"
+#define filename "binaryMembers.dat"
 struct team{
     char name[30];
     char role[30];
@@ -9,7 +9,7 @@ struct team{
 
 int main(){
     FILE *file;
-    struct team casestudy;
+    struct team member;
     int members;
     char repeat;
     system("cls");
@@ -21,24 +21,24 @@ int main(){
         printf("Team Member #%d\n", i+1);
         printf("Name: ");
         scanf("\n");
-        gets(casestudy.name);
+        gets(member.name);
         printf("Age: ");
-        scanf("%d", &casestudy.age);
+        scanf("%d", &member.age);
         printf("Role: ");
         scanf("\n");
-        gets(casestudy.role);
+        gets(member.role);
         // Printing Struct datas to file
-        fwrite(&casestudy, sizeof(struct team), 1, file);
+        fwrite(&member, sizeof(struct team), 1, file);
     }
     fclose(file);
 
     system("cls");
-    casestudy = (struct team){0}; //Set the value of casestudy to none to prove that fread works
+    member = (struct team){0}; //Set the value of member to none to prove that fread works
     file = fopen(filename, "rb");
     //Transferring datas from file to struct
     printf("Viewing Files:\n\n");
-    for(int i = 0; fread(&casestudy, sizeof(struct team), 1, file) != (int)NULL; i++)
-    printf("Team Member #%d\nName: %s\nAge: %d\nRole: %s\n\n", i+1, casestudy.name, casestudy.age, casestudy.role);
+    for(int i = 0; fread(&member, sizeof(struct team), 1, file) != (int)NULL; i++)
+    printf("Team Member #%d\nName: %s\nAge: %d\nRole: %s\n\n", i+1, member.name, member.age, member.role);
     printf("Press Any Button to Continue...\nExcept the Power Button...\n");
     getch();
     fclose(file);
@@ -53,21 +53,22 @@ int main(){
             printf("Add Team Member #%d\n", i+1);
             printf("Name: ");
             scanf("\n");
-            gets(casestudy.name);
+            gets(member.name);
             printf("Age: ");
-            scanf("%d", &casestudy.age);
+            scanf("%d", &member.age);
             printf("Role: ");
             scanf("\n");
-            gets(casestudy.role);
+            gets(member.role);
             // Printing Struct datas to file
-            fwrite(&casestudy, sizeof(struct team), 1, file);
+            fwrite(&member, sizeof(struct team), 1, file);
         }
         fclose(file);
         //Reading the Updated Datas
         file = fopen(filename, "rb");
+        system("cls");
         printf("Viewing Files:\n\n");
-        for(int i = 0; fread(&casestudy, sizeof(struct team), 1, file) != (int)NULL; i++)
-        printf("Team Member #%d\nName: %s\nAge: %d\nRole: %s\n\n", i+1, casestudy.name, casestudy.age, casestudy.role);
+        for(int i = 0; fread(&member, sizeof(struct team), 1, file) != (int)NULL; i++)
+        printf("Team Member #%d\nName: %s\nAge: %d\nRole: %s\n\n", i+1, member.name, member.age, member.role);
         printf("Press Any Button to Continue...");
         getch();
         fclose(file);

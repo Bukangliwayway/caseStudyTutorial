@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#define filename "file.txt"
+#define filename "lesson2.txt"
 int main(){
     int num;
     char word[30];

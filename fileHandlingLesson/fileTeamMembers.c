@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#define filename "file.txt"
+#define filename "projectMembers.txt"
 int main(){
     system("cls");
     int members, age, addMembers;
