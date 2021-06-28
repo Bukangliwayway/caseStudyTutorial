@@ -33,10 +33,11 @@ int main(){
             printf("A. Add Movies\nB. View Movies\nC. Edit Movies\nD. Remove Movies\nE. Exit\n");
             printf("Select Process: ");
             scanf(" %c", &select);
+            if(original == NULL && (select <= 'A' || select >= 'E')) break;
             if(original != NULL){
                 fseek(original, 0, SEEK_END);
                 if(ftell(original)!=0) break;
-                if(ftell(original)==0 && (select == 'A' || select == 'E'))break;
+                if(ftell(original)==0 && (select <= 'A' || select >= 'E'))break;
             }
             system("cls");
             printf("There is no recorded movie.\nAdd movies first\n\n");
