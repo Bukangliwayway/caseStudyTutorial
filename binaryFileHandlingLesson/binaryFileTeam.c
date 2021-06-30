@@ -6,7 +6,6 @@ struct team{
     char role[30];
     int age;
 };
-
 int main(){
     FILE *file;
     struct team member;
@@ -80,6 +79,6 @@ int main(){
             system("cls");
             printf("Invalid Input!\n\n");    
         }
-    }while((repeat!='n' && repeat=='y') || (repeat!='N' && repeat=='Y'));
+    }while(repeat=='y' || repeat=='Y');
     return 0;
 }

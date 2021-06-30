@@ -25,6 +25,8 @@ int main(){
         gets(role);
         fprintf(file, "%s\t%d\t%s\n", name,age,role);
     }
+    printf("Press any button\n");
+    getch();
     fclose(file);
     system("cls");
     file = fopen(filename, "r");
@@ -41,7 +43,6 @@ int main(){
     getch();
     system("cls");
     file = fopen(filename, "a");
-
     printf("How Many Members to Add: ");
     scanf("%d", &addMembers);
     for(int i = 0; i < addMembers; i++){
@@ -58,7 +59,8 @@ int main(){
         fprintf(file, "%s\t%d\t%s\n", name,age,role);
     }
     fclose(file);
-
+    printf("\npress any button to proceed");
+    getch();
     file = fopen(filename, "r");
     // Terminate if file is non existing
     if(file==NULL){
@@ -66,11 +68,10 @@ int main(){
         return 0;
     }
     system("cls");
-    for(int i = 0; i < members+addMembers; i++){
+    for(int i = 0; i < 5; i++){
         fscanf(file, "%s %d %s", &name, &age, &role);
         printf("Team Member#%d\nName: %s\nAge: %d\nRole: %s\n\n", i+1, name, age, role);
     }
     fclose(file);
-
     return 0;
 }

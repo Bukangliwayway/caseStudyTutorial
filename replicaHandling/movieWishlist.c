@@ -64,16 +64,17 @@ int main(){
                 system("cls");
                 printf("Invalid Input!\n\n");
         }
-        if(select >= 'A' && select <= 'D') system("cls");
+        system("cls");
     }
 }
 
 void addMovies(){
-    int movies, recordCount = 0;
+    int movies;
+    movieCount = 0;
     original = fopen(filename, "rb");
-    while(fread(&movie, sizeof(struct list), 1, original)!= (int)NULL) recordCount++;    
+    while(fread(&movie, sizeof(struct list), 1, original)!= (int)NULL) movieCount++;    
     system("cls");
-    if(recordCount > 25){
+    if(movieCount >= 25){
         printf("Records Exceeded. Delete some Files First!\n\n"); getch();
         return;
     } 
@@ -95,9 +96,9 @@ void addMovies(){
         fclose(original);
     }else{
         while(1){
-            printf("How Many Movies: ");
+            printf("Input 0 for exit!\nHow Many Movies: ");
             scanf("%d", &movies);
-            if(movies > 0 && movies < (25-recordCount)) break;
+            if(movies >= 0 && movies <= (25-movieCount)) break;
             system("cls");
             printf("Either it's too much or too less\n\n");
         }
@@ -126,31 +127,31 @@ void addProcess(){
 }
 
 void viewMovies(){
-    original = fopen(filename, "rb");
     while(1){
+        original = fopen(filename, "rb");
         movieCount = 0;
         for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
             printf(" %c. %s\t%d\n",'A'+i, movie.movieName, movie.releaseDate);
             movieCount++;
         }
         printf(" %c. Exit Process\n\n", 'A'+movieCount);
-        fseek(original, 0, SEEK_SET);
+        fclose(original);
         printf("Select Movies: ");
         scanf(" %c", &select);
         if(select >= 'A' && select <= 'A'+ movieCount) break;
         system("cls");
         printf("Invalid Choice!\n\n");
     }
-    fclose(original);
     system("cls");
     original = fopen(filename, "rb");
     for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
         if(i != select-'A') continue;
-        printf("Movie Name: %s\nMovie Director: %s\nDate Realease: %d\nRatings: %0.1f\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
+        printf("Movie Name: %s\nMovie Director: %s\nDate Release: %d\nRatings: %0.1f\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
         printf("\nPress Any key to quit...");
         getch();
         break;
     }
+    system("cls");
     fclose(original);
 }
 
@@ -158,10 +159,9 @@ void editMovie(){
     while(1){
         original = fopen(filename, "rb");
         movieCount = 0;
-        for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
+        //Process 1: Select Movies
+        for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++, movieCount++)
             printf(" %c. %s\n",'A'+i, movie.movieName);
-            movieCount++;
-        }
         printf(" %c. Exit Process\n\n", 'A'+movieCount);
         fclose(original);
         printf("Select Movies: ");
@@ -173,12 +173,15 @@ void editMovie(){
     if(select == 'A'+ movieCount) return;
     movieCount = (int)select; // aaaaaaaa I don't wanna use and waste another variable just to save this line okay?!
     system("cls");
+    //Process 2: Select Datas
+
     while(1){   
         original = fopen(filename, "rb");
         for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
-            if(i != movieCount-'A') continue;
-            printf("A. Movie Name: %s\nB. Movie Director: %s\nC. Date Release: %d\nD. Ratings: %0.1f\nE. Exit Process\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
-            break;
+            if(i == movieCount-'A'){
+                printf("A. Movie Name: %s\nB. Movie Director: %s\nC. Date Release: %d\nD. Ratings: %0.1f\nE. Exit Process\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
+                break;
+            }
         }
         fclose(original);
         printf("\nChoose Data to Edit: ");
@@ -188,6 +191,7 @@ void editMovie(){
         printf("Invalid Choice!\n\n");
     }
     system("cls");
+    //Process 3: Input the Update
     original = fopen(filename, "rb");
     replica = fopen(replicaname, "wb");
     for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
@@ -246,26 +250,29 @@ void editMovie(){
         fclose(original);
     } 
     system("cls");
+    //Process 4: Show Updated Datas
     original = fopen(filename, "rb");
     printf("Here are the updated Datas: \n\n");
     for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
-        if(i != movieCount-'A') continue;
-        printf("A. Movie Name: %s\nB. Movie Director: %s\nC. Date Release: %d\nD. Ratings: %0.1f\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
-        printf("Press any key to quit...");
-        getch();
-        break;
+        if(i == movieCount-'A'){
+            printf("A. Movie Name: %s\nB. Movie Director: %s\nC. Date Release: %d\nD. Ratings: %0.1f\n", movie.movieName, movie.director, movie.releaseDate, movie.ratings);
+            printf("Press any key to quit...");
+            getch();
+            break;
+        }
     }
     fclose(original);
 }
 
 void removeMovie(){
+    //Process 1: Choose Movie
     while(1){
         original = fopen(filename, "rb");
         movieCount = 0;
-        for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++){
+        //Printing Movies Name
+        for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++, movieCount++)
             printf(" %c. %s\n",'A'+i, movie.movieName);
-            movieCount++;
-        }
+        //Print Exit process with respect to the number of the available files
         printf(" %c. Exit Process\n\n", 'A'+movieCount);
         fclose(original);
         printf("Select Movies to Remove: ");
@@ -297,14 +304,17 @@ void removeMovie(){
         getch();
         original = fopen(filename, "wb");
         replica = fopen(replicaname, "rb");
+        //Copy Every Lines in Replica to Original
         for(int i = 0; fread(&movie, sizeof(struct list), 1, replica) != (int)NULL; i++)
             fwrite(&movie, sizeof(struct list), 1, original);
         fclose(replica);
         fclose(original);
     }
     system("cls");
+    //Process 2: Show The Updated Datas
     original = fopen(filename, "rb");
     printf("Here's the updated record: \n");
+    //Print Every Line in Original File
     for(int i = 0; fread(&movie, sizeof(struct list), 1, original) != (int)NULL; i++)
         printf(" %c. %s\t%d\n", 'A'+i, movie.movieName, movie.releaseDate);
     printf("Press any key to quit...");
